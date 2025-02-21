@@ -1,0 +1,48 @@
+.fines-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.fine-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.fine-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.fine-info {
+    margin-bottom: 15px;
+}
+
+.fine-info p {
+    margin: 5px 0;
+}
+
+.fine-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.badge.en_attente {
+    background-color: var(--warning-color);
+    color: black;
+}
+
+.badge.payee {
+    background-color: var(--success-color);
+    color: white;
+}
+
+.badge.annulee {
+    background-color: var(--error-color);
+    color: white;
+} 

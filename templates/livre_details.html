@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% from "modal.html" import modal %}
+
+{% block title %}{{ livre.titre }}{% endblock %}
+
+{% block content %}
+<div class="book-details">
+    <div class="header-actions">
+        <h1>{{ livre.titre }}</h1>
+        <span class="badge {{ 'success' if livre.disponible else 'warning' }}">
+            {{ 'Disponible' if livre.disponible else 'Emprunté' }}
+        </span>
+    </div>
+
+    <div class="details-grid">
+        <div class="info-card">
+            <h2>Informations</h2>
+            <p><strong>Auteur:</strong> {{ livre.auteur }}</p>
+            <p><strong>ISBN:</strong> {{ livre.isbn }}</p>
+            {% if livre.disponible %}
+            <button class="btn primary" onclick="showModal('borrowModal')">Emprunter</button>
+            {% endif %}
+        </div>
+
+        <div class="history-card">
+            <h2>Historique des emprunts</h2>
+            <div class="emprunts-list">
+                {% for emprunt in livre.emprunts|sort(attribute='date_emprunt', reverse=true) %}
+                <div class="emprunt-item">
+                    <p>
+                        <strong>{{ emprunt.membre.prenom }} {{ emprunt.membre.nom }}</strong><br>
+                        Du {{ emprunt.date_emprunt.strftime('%d/%m/%Y') }}
+                        {% if emprunt.date_retour_effective %}
+                        au {{ emprunt.date_retour_effective.strftime('%d/%m/%Y') }}
+                        {% else %}
+                        (en cours)
+                        {% endif %}
+                    </p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal d'emprunt -->
+{{ modal('borrowModal', 'Emprunter le livre') }}
+{% block modal_content %}
+<form action="{{ url_for('emprunter_livre', livre_id=livre.id) }}" method="POST">
+    <div class="form-group">
+        <label>Membre:</label>
+        <select name="membre_id" required>
+            <option value="">Sélectionner un membre</option>
+            {% for membre in membres_actifs %}
+            <option value="{{ membre.id }}">{{ membre.prenom }} {{ membre.nom }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn primary">Confirmer l'emprunt</button>
+</form>
+{% endblock %}
+{% endblock %} 

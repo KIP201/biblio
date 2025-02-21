@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block content %}
+<div class="stats-page">
+    <div class="header-actions">
+        <h1>Statistiques de la bibliothèque</h1>
+    </div>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Livres</h3>
+            <div class="stat-number">{{ stats.total_livres }}</div>
+            <div class="stat-details">
+                <p>{{ stats.livres_empruntes }} emprunté(s)</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <h3>Membres actifs</h3>
+            <div class="stat-number">{{ stats.total_membres }}</div>
+        </div>
+
+        <div class="stat-card">
+            <h3>Emprunts en cours</h3>
+            <div class="stat-number">{{ stats.emprunts_en_cours }}</div>
+            <div class="stat-details">
+                <p>{{ stats.emprunts_en_retard }} en retard</p>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <h3>Amendes impayées</h3>
+            <div class="stat-number">{{ stats.amendes_impayees }}</div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

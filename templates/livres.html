@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Livres{% endblock %}
+
+{% block content %}
+<div class="books-page">
+    <div class="header-actions">
+        <h1>Catalogue des livres</h1>
+        <button class="btn primary" onclick="showModal('addBookModal')">Ajouter un livre</button>
+    </div>
+
+    <div class="search-bar">
+        <input type="text" id="searchInput" placeholder="Rechercher un livre..." onkeyup="filterBooks()">
+        <select id="filterStatus" onchange="filterBooks()">
+            <option value="">Tous les statuts</option>
+            <option value="disponible">Disponible</option>
+            <option value="emprunte">Emprunté</option>
+        </select>
+    </div>
+
+    <div class="books-grid">
+        {% for livre in livres %}
+        <div class="book-card">
+            <div class="book-header">
+                <h3>{{ livre.titre }}</h3>
+                <span class="badge {{ 'success' if livre.disponible else 'warning' }}">
+                    {{ 'Disponible' if livre.disponible else 'Emprunté' }}
+                </span>
+            </div>
+            <div class="book-info">
+                <p><strong>Auteur:</strong> {{ livre.auteur }}</p>
+                <p><strong>ISBN:</strong> {{ livre.isbn }}</p>
+            </div>
+            <div class="book-actions">
+                <a href="{{ url_for('livre_details', livre_id=livre.id) }}" class="btn secondary">Détails</a>
+                {% if livre.disponible %}
+                <button class="btn primary" onclick="showBorrowModal('{{ livre.id }}')">Emprunter</button>
+                {% endif %}
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Modal d'ajout de livre -->
+<div id="addBookModal" class="modal">
+    <div class="modal-content">
+        <h2>Ajouter un livre</h2>
+        <form action="{{ url_for('ajouter_livre') }}" method="POST">
+            <div class="form-group">
+                <label>Titre:</label>
+                <input type="text" name="titre" required>
+            </div>
+            <div class="form-group">
+                <label>Auteur:</label>
+                <input type="text" name="auteur" required>
+            </div>
+            <div class="form-group">
+                <label>ISBN:</label>
+                <input type="text" name="isbn" required pattern="[0-9]{13}">
+            </div>
+            <button type="submit" class="btn primary">Ajouter</button>
+            <button type="button" class="btn secondary" onclick="hideModal('addBookModal')">Annuler</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function filterBooks() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    const status = document.getElementById('filterStatus').value;
+    const cards = document.querySelectorAll('.book-card');
+    
+    cards.forEach(card => {
+        const title = card.querySelector('h3').textContent.toLowerCase();
+        const author = card.querySelector('.book-info').textContent.toLowerCase();
+        const isAvailable = card.querySelector('.badge').textContent.includes('Disponible');
+        
+        const matchesSearch = title.includes(search) || author.includes(search);
+        const matchesStatus = status === '' || 
+            (status === 'disponible' && isAvailable) || 
+            (status === 'emprunte' && !isAvailable);
+        
+        card.style.display = matchesSearch && matchesStatus ? 'block' : 'none';
+    });
+}
+
+function showBorrowModal(livreId) {
+    document.getElementById('borrowBookId').value = livreId;
+    showModal('borrowModal');
+}
+</script>
+{% endblock %} 

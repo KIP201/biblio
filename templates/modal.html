@@ -1,0 +1,13 @@
+{% macro modal(id, title) %}
+<div id="{{ id }}" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h2>{{ title }}</h2>
+            <span class="close" onclick="hideModal('{{ id }}')">&times;</span>
+        </div>
+        <div class="modal-body">
+            {% block modal_content %}{% endblock %}
+        </div>
+    </div>
+</div>
+{% endmacro %} 

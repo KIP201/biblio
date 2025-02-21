@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% from "modal.html" import modal with context %}
+
+{% block title %}Amendes{% endblock %}
+
+{% block content %}
+<div class="fines-page">
+    <div class="header-actions">
+        <h1>Gestion des amendes</h1>
+    </div>
+
+    <div class="fines-grid">
+        {% for amende in amendes %}
+        <div class="fine-card">
+            <div class="fine-header">
+                <h3>Amende #{{ amende.id }}</h3>
+                <span class="badge {{ amende.statut.value|lower }}">
+                    {{ amende.statut.value }}
+                </span>
+            </div>
+            <div class="fine-info">
+                <p><strong>Membre:</strong> {{ amende.emprunt.membre.prenom }} {{ amende.emprunt.membre.nom }}</p>
+                <p><strong>Livre:</strong> {{ amende.emprunt.livre.titre }}</p>
+                <p><strong>Montant:</strong> {{ "%.2f"|format(amende.montant) }}€</p>
+                <p><strong>Date:</strong> {{ amende.date_creation.strftime('%d/%m/%Y') }}</p>
+            </div>
+            {% if amende.statut.value == 'EN_ATTENTE' %}
+            <div class="fine-actions">
+                <button class="btn primary" onclick="showModal('payFineModal{{ amende.id }}')">Payer</button>
+                <button class="btn secondary" onclick="showModal('cancelFineModal{{ amende.id }}')">Annuler</button>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+{% for amende in amendes %}
+    {% if amende.statut.value == 'EN_ATTENTE' %}
+        {% call modal('payFineModal' + amende.id|string, 'Payer l\'amende #' + amende.id|string) %}
+            <form action="{{ url_for('amendes.payer_amende', amende_id=amende.id) }}" method="POST">
+                <div class="form-group">
+                    <label>Mode de paiement:</label>
+                    <select name="mode_paiement" required>
+                        <option value="ESPECES">Espèces</option>
+                        <option value="CHEQUE">Chèque</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <p>Montant à payer: <strong>{{ "%.2f"|format(amende.montant) }}€</strong></p>
+                </div>
+                <button type="submit" class="btn primary">Confirmer le paiement</button>
+            </form>
+        {% endcall %}
+
+        {% call modal('cancelFineModal' + amende.id|string, 'Annuler l\'amende #' + amende.id|string) %}
+            <form action="{{ url_for('amendes.annuler_amende', amende_id=amende.id) }}" method="POST">
+                <div class="form-group">
+                    <label>Motif d'annulation:</label>
+                    <textarea name="motif" required></textarea>
+                </div>
+                <button type="submit" class="btn primary">Confirmer l'annulation</button>
+            </form>
+        {% endcall %}
+    {% endif %}
+{% endfor %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/modal.js') }}"></script>
+{% endblock %} 
