@@ -17,7 +17,7 @@ def has_role(role):
         def decorated_function(*args, **kwargs):
             if 'user_roles' not in session or role not in session['user_roles']:
                 flash('Accès non autorisé.', 'error')
-                return redirect(url_for('home'))
+                return redirect(url_for('main.home'))
             return f(*args, **kwargs)
         return decorated_function
     return decorator 

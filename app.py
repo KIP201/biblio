@@ -4,7 +4,7 @@ from models import User
 from utils.database import db_manager
 from routes import init_routes
 from config import config
-from config.logging import setup_logging
+from config.logging_config import setup_logging
 
 app = Flask(__name__)
 app.config.from_object(config)

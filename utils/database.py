@@ -1,5 +1,5 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.exc import SQLAlchemyError
 from models import Base
 from config import config
@@ -11,45 +11,43 @@ class DatabaseManager:
     def __init__(self):
         self.engine = None
         self.Session = None
-        self._current_session = None
-    
+
     def init_db(self):
         try:
             # Création du dossier de la base de données si nécessaire
             db_dir = os.path.dirname(config.database.name)
             if db_dir and not os.path.exists(db_dir):
                 os.makedirs(db_dir)
-            
+
             # Initialisation du moteur SQLAlchemy
             self.engine = create_engine(
                 config.database.url,
                 echo=config.debug,
-                pool_pre_ping=True
+                pool_pre_ping=True,
+                connect_args={"check_same_thread": False}
             )
-            
+
             # Création des tables
             Base.metadata.create_all(self.engine)
-            
+
             # Configuration de la session
-            self.Session = sessionmaker(bind=self.engine)
-            
+            session_factory = sessionmaker(bind=self.engine)
+            self.Session = scoped_session(session_factory)
+
             logger.info("Base de données initialisée avec succès")
             return True
-            
+
         except Exception as e:
             logger.error(f"Erreur lors de l'initialisation de la base de données: {str(e)}")
             return False
-    
+
     def get_session(self):
-        if not self._current_session:
-            self._current_session = self.Session()
-        return self._current_session
-    
+        return self.Session()
+
     def close_session(self):
-        if self._current_session:
-            self._current_session.close()
-            self._current_session = None
-    
+        if self.Session:
+            self.Session.remove()
+
     def backup_db(self, backup_dir=None):
         try:
             if not backup_dir:
@@ -59,4 +57,4 @@ class DatabaseManager:
             logger.error(f"Erreur lors de la sauvegarde: {str(e)}")
             return False
 
-db_manager = DatabaseManager() 
+db_manager = DatabaseManager()

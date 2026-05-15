@@ -32,7 +32,7 @@
                 <p><strong>ISBN:</strong> {{ livre.isbn }}</p>
             </div>
             <div class="book-actions">
-                <a href="{{ url_for('livre_details', livre_id=livre.id) }}" class="btn secondary">Détails</a>
+                <a href="{{ url_for('livres.livre_details', livre_id=livre.id) }}" class="btn secondary">Détails</a>
                 {% if livre.disponible %}
                 <button class="btn primary" onclick="showBorrowModal('{{ livre.id }}')">Emprunter</button>
                 {% endif %}
@@ -46,7 +46,7 @@
 <div id="addBookModal" class="modal">
     <div class="modal-content">
         <h2>Ajouter un livre</h2>
-        <form action="{{ url_for('ajouter_livre') }}" method="POST">
+        <form action="{{ url_for('livres.ajouter_livre') }}" method="POST">
             <div class="form-group">
                 <label>Titre:</label>
                 <input type="text" name="titre" required>

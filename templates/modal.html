@@ -6,8 +6,8 @@
             <span class="close" onclick="hideModal('{{ id }}')">&times;</span>
         </div>
         <div class="modal-body">
-            {% block modal_content %}{% endblock %}
+            {{ caller() }}
         </div>
     </div>
 </div>
-{% endmacro %} 
+{% endmacro %}

@@ -15,11 +15,22 @@ def liste_amendes():
 def payer_amende(amende_id):
     session = db_manager.get_session()
     amende = session.query(Amende).get(amende_id)
-    
+
     if amende and amende.statut == StatutAmende.EN_ATTENTE:
         amende.statut = StatutAmende.PAYEE
         amende.date_paiement = datetime.now()
         amende.mode_paiement = ModePaiement[request.form['mode_paiement']]
         session.commit()
-    
-    return redirect(url_for('amendes.liste_amendes')) 
+
+    return redirect(url_for('amendes.liste_amendes'))
+
+@amendes_bp.route('/amende/<int:amende_id>/annuler', methods=['POST'])
+def annuler_amende(amende_id):
+    session = db_manager.get_session()
+    amende = session.query(Amende).get(amende_id)
+
+    if amende and amende.statut == StatutAmende.EN_ATTENTE:
+        amende.statut = StatutAmende.ANNULEE
+        session.commit()
+
+    return redirect(url_for('amendes.liste_amendes'))

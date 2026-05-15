@@ -44,9 +44,8 @@
 </div>
 
 <!-- Modal d'emprunt -->
-{{ modal('borrowModal', 'Emprunter le livre') }}
-{% block modal_content %}
-<form action="{{ url_for('emprunter_livre', livre_id=livre.id) }}" method="POST">
+{% call modal('borrowModal', 'Emprunter le livre') %}
+<form action="{{ url_for('livres.emprunter_livre', livre_id=livre.id) }}" method="POST">
     <div class="form-group">
         <label>Membre:</label>
         <select name="membre_id" required>
@@ -58,5 +57,5 @@
     </div>
     <button type="submit" class="btn primary">Confirmer l'emprunt</button>
 </form>
+{% endcall %}
 {% endblock %}
-{% endblock %} 
