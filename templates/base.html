@@ -8,18 +8,28 @@
     <nav class="navbar">
         <div class="nav-brand">Bibliothèque</div>
         <div class="nav-links">
-            <a href="{{ url_for('home') }}">Accueil</a>
-            <a href="{{ url_for('livres') }}">Livres</a>
-            <a href="{{ url_for('membres') }}">Membres</a>
-            <a href="{{ url_for('amendes') }}">Amendes</a>
+            <a href="{{ url_for('main.home') }}">Accueil</a>
+            <a href="{{ url_for('livres.liste_livres') }}">Livres</a>
+            <a href="{{ url_for('membres.liste_membres') }}">Membres</a>
+            <a href="{{ url_for('amendes.liste_amendes') }}">Amendes</a>
         </div>
     </nav>
-    
+
+    <div class="flash-messages">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
     <main class="container">
         {% block content %}{% endblock %}
     </main>
-    
+
     <script src="{{ url_for('static', filename='js/main.js') }}"></script>
     {% block scripts %}{% endblock %}
 </body>
-</html> 
+</html>
